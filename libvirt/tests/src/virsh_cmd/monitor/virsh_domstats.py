@@ -14,6 +14,7 @@ from virttest.libvirt_xml.devices.panic import Panic
 
 from virttest import libvirt_version
 
+from avocado.utils import process
 
 # Using as lower capital is not the best way to do, but this is just a
 # workaround to avoid changing the entire file.
@@ -355,6 +356,8 @@ def run(test, params, env):
         if "--iothread" in domstats_option:
             add_iothread(vm_list, iothread_add_ids)
         # Run virsh command
+        process.run("echo 1 > /proc/sys/kernel/sched_schedstats",shell=True)
+        logging.debug("sched_schedstats enabled successfully.")
         result = virsh.domstats(vm_list, domstats_option, ignore_status=True,
                                 debug=True)
         status = result.exit_status
